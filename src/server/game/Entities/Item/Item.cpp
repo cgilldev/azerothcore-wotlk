@@ -38,7 +38,7 @@ void Item::SetCount(uint32 value)
     // may be locked. Acquisition hooks handle initial storage.
     if (previous != value && IsInWorld())
         if (Player* owner = GetOwner())
-            sScriptMgr->OnPlayerItemCountChanged(owner, this, value);
+            sScriptMgr->OnPlayerItemCountChanged(owner, this, previous, value);
 }
 
 void AddItemsSetItem(Player* player, Item* item)

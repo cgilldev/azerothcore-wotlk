@@ -3185,7 +3185,7 @@ void Player::DestroyItem(uint8 bag, uint8 slot, bool update)
         ItemRemovedQuestCheck(pItem->GetEntry(), pItem->GetCount());
 
         sScriptMgr->OnItemRemove(this, pItem);
-        sScriptMgr->OnPlayerItemCountChanged(this, pItem, 0);
+        sScriptMgr->OnPlayerItemCountChanged(this, pItem, pItem->GetCount(), 0);
 
         if (bag == INVENTORY_SLOT_BAG_0)
         {

@@ -437,7 +437,8 @@ public:
     virtual void OnPlayerAfterMoveItemToInventory(Player* /*player*/, Item* /*it*/, bool /*update*/) { }
 
     // Inventory observers may update cached metadata here; no database queries.
-    virtual void OnPlayerItemCountChanged(Player* /*player*/, Item* /*item*/, uint32 /*count*/)
+    virtual void OnPlayerItemCountChanged(Player* /*player*/, Item* /*item*/, uint32 /*previousCount*/,
+                                          uint32 /*count*/)
     {
     }
 

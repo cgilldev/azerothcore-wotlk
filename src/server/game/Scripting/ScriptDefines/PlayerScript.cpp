@@ -348,10 +348,10 @@ void ScriptMgr::OnPlayerAfterMoveItemToInventory(Player* player, Item* it, bool 
     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_AFTER_MOVE_ITEM_TO_INVENTORY, script->OnPlayerAfterMoveItemToInventory(player, it, update));
 }
 
-void ScriptMgr::OnPlayerItemCountChanged(Player* player, Item* item, uint32 count)
+void ScriptMgr::OnPlayerItemCountChanged(Player* player, Item* item, uint32 previousCount, uint32 count)
 {
     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_ITEM_COUNT_CHANGED,
-                       script->OnPlayerItemCountChanged(player, item, count));
+                       script->OnPlayerItemCountChanged(player, item, previousCount, count));
 }
 
 void ScriptMgr::OnPlayerSaveInventory(Player* player, CharacterDatabaseTransaction trans)
