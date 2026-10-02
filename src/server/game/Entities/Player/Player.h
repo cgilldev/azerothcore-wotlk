@@ -2034,7 +2034,7 @@ public:
 
     void BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) override;
     void DestroyForPlayer(Player* target, bool onDeath = false) const override;
-    void SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 BonusXP, bool recruitAFriend = false, float group_rate = 1.0f);
+    void SendLogXPGain(uint32 GivenXP, Unit* victim, uint64 BonusXP, bool recruitAFriend = false, float group_rate = 1.0f);
 
     // notifiers
     void SendAttackSwingCantAttack();

@@ -95,6 +95,7 @@
 #include "WorldStateDefines.h"
 #include "WorldStatePackets.h"
 #include <cmath>
+#include <limits>
 #include <queue>
 
 /// @todo: this import is not necessary for compilation and marked as unused by the IDE
@@ -2382,11 +2383,12 @@ void Player::RemoveFromGroup(Group* group, ObjectGuid guid, RemoveMethod method 
     }
 }
 
-void Player::SendLogXPGain(uint32 GivenXP, Unit* victim, uint32 BonusXP, bool recruitAFriend, float /*group_rate*/)
+void Player::SendLogXPGain(uint32 GivenXP, Unit* victim, uint64 BonusXP, bool recruitAFriend, float /*group_rate*/)
 {
     WorldPacket data(SMSG_LOG_XPGAIN, 22); // guess size?
     data << (victim ? victim->GetGUID() : ObjectGuid::Empty);   // guid
-    data << uint32(GivenXP + BonusXP);                          // given experience
+    data << static_cast<uint32>(std::min<uint64>(static_cast<uint64>(GivenXP) + BonusXP,
+                                                 std::numeric_limits<uint32>::max())); // given experience
     data << uint8(victim ? 0 : 1);                              // 00-kill_xp type, 01-non_kill_xp type
 
     if (victim)
@@ -2441,12 +2443,12 @@ void Player::GiveXP(uint32 xp, Unit* victim, float group_rate, bool isLFGReward)
     if (HasPlayerFlag(PLAYER_FLAGS_PARTIAL_PLAY_TIME))
         xp = std::max(1u, xp / 2);
 
-    uint32 bonus_xp = 0;
+    uint64 bonus_xp = 0;
     bool recruitAFriend = GetsRecruitAFriendBonus(true);
 
     // RaF does NOT stack with rested experience
     if (recruitAFriend)
-        bonus_xp = 2 * xp; // xp + bonus_xp must add up to 3 * xp for RaF; calculation for quests done client-side
+        bonus_xp = 2ull * xp; // xp + bonus_xp must add up to 3 * xp for RaF; calculation for quests done client-side
     else
         bonus_xp = victim ? GetXPRestBonus(xp) : 0; // XP resting bonus
 
@@ -2459,20 +2461,40 @@ void Player::GiveXP(uint32 xp, Unit* victim, float group_rate, bool isLFGReward)
 
     uint32 curXP = GetUInt32Value(PLAYER_XP);
     uint32 nextLvlXP = GetUInt32Value(PLAYER_NEXT_LEVEL_XP);
-    uint32 newXP = curXP + xp + bonus_xp;
+    uint64 newXP = static_cast<uint64>(curXP) + xp + bonus_xp;
 
+    bool gainedLevel = false;
     while (newXP >= nextLvlXP && level < maxLevel)
     {
         newXP -= nextLvlXP;
 
         if (level < maxLevel)
+        {
+            uint8 previousLevel = GetLevel();
             GiveLevel(level + 1);
+            if (GetLevel() == previousLevel)
+            {
+                // A script may veto the level-up. Discard the unconsumed award
+                // so it cannot accumulate as deferred XP or keep this loop alive.
+                newXP = 0;
+                break;
+            }
+            gainedLevel = true;
+        }
 
         level = GetLevel();
         nextLvlXP = GetUInt32Value(PLAYER_NEXT_LEVEL_XP);
     }
 
-    SetUInt32Value(PLAYER_XP, newXP);
+    // A large award can land exactly on a scripted ceiling with a remainder
+    // smaller than the next level's requirement. Do not bank that remainder.
+    if (gainedLevel && newXP && level < maxLevel && !sScriptMgr->OnPlayerCanGiveLevel(this, level + 1))
+        newXP = 0;
+
+    if (level >= maxLevel)
+        newXP = 0;
+
+    SetUInt32Value(PLAYER_XP, static_cast<uint32>(newXP));
 }
 
 // Update player to next level

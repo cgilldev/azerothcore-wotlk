@@ -1118,6 +1118,7 @@ void World::DetectDBCLang()
 /// Update the World !
 void World::Update(uint32 diff)
 {
+    uint32 const updateStart = getMSTime();
     METRIC_TIMER("world_update_time_total");
 
     ///- Update the game time and check for shutdown time
@@ -1369,6 +1370,7 @@ void World::Update(uint32 diff)
         sMetric->Update();
         METRIC_VALUE("update_time_diff", diff);
     }
+    sWorldUpdateTime.SetLastUpdateDuration(GetMSTimeDiffToNow(updateStart));
 }
 
 // Internally uses setFloatConfig. Retained for backwards compatibility

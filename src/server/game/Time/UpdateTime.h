@@ -66,12 +66,15 @@ class AC_GAME_API WorldUpdateTime : public UpdateTime
 {
 public:
     WorldUpdateTime() : UpdateTime(), _recordUpdateTimeInverval(0), _recordUpdateTimeMin(0), _lastRecordTime(0) { }
+    uint32 GetLastUpdateDuration() const;
+    void SetLastUpdateDuration(uint32 duration);
     void LoadFromConfig();
     void SetRecordUpdateTimeInterval(Milliseconds t);
     void RecordUpdateTime(Milliseconds gameTimeMs, uint32 diff, uint32 sessionCount);
     void RecordUpdateTimeDuration(std::string const& text);
 
 private:
+    uint32 _lastUpdateDuration = 0;
     Milliseconds _recordUpdateTimeInverval;
     Milliseconds _recordUpdateTimeMin;
     Milliseconds _lastRecordTime;

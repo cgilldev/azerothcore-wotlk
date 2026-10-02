@@ -155,6 +155,16 @@ void WorldUpdateTime::LoadFromConfig()
     _recordUpdateTimeMin = Milliseconds(sConfigMgr->GetOption<uint32>("MinRecordUpdateTimeDiff", 100));
 }
 
+uint32 WorldUpdateTime::GetLastUpdateDuration() const
+{
+    return _lastUpdateDuration;
+}
+
+void WorldUpdateTime::SetLastUpdateDuration(uint32 duration)
+{
+    _lastUpdateDuration = duration;
+}
+
 void WorldUpdateTime::SetRecordUpdateTimeInterval(Milliseconds t)
 {
     _recordUpdateTimeInverval = t;
