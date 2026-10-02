@@ -156,6 +156,18 @@ void Player::_SavePlayerSettings(CharacterDatabaseTransaction trans)
     }
 }
 
+PlayerSettingVector const& Player::GetPlayerSettings(std::string const& source) const
+{
+    static PlayerSettingVector const empty;
+    auto it = m_charSettingsMap.find(source);
+    return it == m_charSettingsMap.end() ? empty : it->second;
+}
+
+void Player::ReplacePlayerSettings(std::string const& source, PlayerSettingVector settings)
+{
+    m_charSettingsMap[source] = std::move(settings);
+}
+
 void Player::UpdatePlayerSetting(std::string const& source, uint32 index, uint32 value)
 {
     auto it = m_charSettingsMap.find(source);

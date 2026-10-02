@@ -2681,6 +2681,8 @@ public:
     // Settings
     [[nodiscard]] PlayerSetting GetPlayerSetting(std::string const& source, uint32 index);
     void UpdatePlayerSetting(std::string const& source, uint32 index, uint32 value);
+    [[nodiscard]] PlayerSettingVector const& GetPlayerSettings(std::string const& source) const;
+    void ReplacePlayerSettings(std::string const& source, PlayerSettingVector settings);
 
     void SendSystemMessage(std::string_view msg, bool escapeCharacters = false);
 

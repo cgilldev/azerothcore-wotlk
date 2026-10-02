@@ -18,9 +18,10 @@
 #ifndef SCRIPT_OBJECT_PLAYER_SCRIPT_H_
 #define SCRIPT_OBJECT_PLAYER_SCRIPT_H_
 
+#include "DBCStructure.h"
+#include "DatabaseEnvFwd.h"
 #include "ScriptObject.h"
 #include "SharedDefines.h"
-#include "DBCStructure.h"
 #include <vector>
 
 // TODO to remove
@@ -237,6 +238,8 @@ enum PlayerHook
     PLAYERHOOK_ON_BEFORE_RECEIVE_SPELL_LIST_FROM_TRAINER,
     PLAYERHOOK_ON_GET_TRAINER_SPELL_STATE,
     PLAYERHOOK_ON_AFTER_TRAIN_SPELL,
+    PLAYERHOOK_ON_ITEM_COUNT_CHANGED,
+    PLAYERHOOK_ON_SAVE_INVENTORY,
     PLAYERHOOK_END
 };
 
@@ -432,6 +435,16 @@ public:
 
     // After an item has been moved to inventory
     virtual void OnPlayerAfterMoveItemToInventory(Player* /*player*/, Item* /*it*/, bool /*update*/) { }
+
+    // Inventory observers may update cached metadata here; no database queries.
+    virtual void OnPlayerItemCountChanged(Player* /*player*/, Item* /*item*/, uint32 /*count*/)
+    {
+    }
+
+    // Append auxiliary inventory metadata to the same native transaction.
+    virtual void OnPlayerSaveInventory(Player* /*player*/, CharacterDatabaseTransaction /*trans*/)
+    {
+    }
 
     // After an item has been equipped
     virtual void OnPlayerEquip(Player* /*player*/, Item* /*it*/, uint8 /*bag*/, uint8 /*slot*/, bool /*update*/) { }

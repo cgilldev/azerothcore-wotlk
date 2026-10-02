@@ -375,6 +375,8 @@ public: /* PlayerScript */
     void OnPlayerAfterSetVisibleItemSlot(Player* player, uint8 slot, Item* item);
     void OnPlayerAfterMoveItemFromInventory(Player* player, Item* it, uint8 bag, uint8 slot, bool update);
     void OnPlayerAfterMoveItemToInventory(Player* player, Item* it, bool update);
+    void OnPlayerItemCountChanged(Player* player, Item* item, uint32 count);
+    void OnPlayerSaveInventory(Player* player, CharacterDatabaseTransaction trans);
     void OnPlayerEquip(Player* player, Item* it, uint8 bag, uint8 slot, bool update);
     void OnPlayerUnequip(Player* player, Item* it);
     void OnPlayerJoinBG(Player* player);

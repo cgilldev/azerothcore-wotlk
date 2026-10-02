@@ -107,6 +107,10 @@ struct AuctionEntry
     time_t expire_time;
     ObjectGuid bidder;
     uint32 deposit;                                         //deposit can be calculated only when creating auction
+    // Optional module provenance, reconstructed from native owner metadata.
+    bool earnedBotStock = false;
+    bool syntheticStock = false;
+    bool syntheticBuyer = false;
     AuctionHouseEntry const* auctionHouseEntry;             // in AuctionHouse.dbc
 
     // helpers

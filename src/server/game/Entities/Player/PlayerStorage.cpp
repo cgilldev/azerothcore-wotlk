@@ -3185,6 +3185,7 @@ void Player::DestroyItem(uint8 bag, uint8 slot, bool update)
         ItemRemovedQuestCheck(pItem->GetEntry(), pItem->GetCount());
 
         sScriptMgr->OnItemRemove(this, pItem);
+        sScriptMgr->OnPlayerItemCountChanged(this, pItem, 0);
 
         if (bag == INVENTORY_SLOT_BAG_0)
         {
@@ -7458,6 +7459,7 @@ void Player::_SaveAuras(CharacterDatabaseTransaction trans, bool logout)
 
 void Player::_SaveInventory(CharacterDatabaseTransaction trans)
 {
+    sScriptMgr->OnPlayerSaveInventory(this, trans);
     CharacterDatabasePreparedStatement* stmt = nullptr;
     // force items in buyback slots to new state
     // and remove those that aren't already

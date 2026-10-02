@@ -30,6 +30,17 @@
 #include "Tokenize.h"
 #include "WorldPacket.h"
 
+void Item::SetCount(uint32 value)
+{
+    uint32 previous = GetCount();
+    SetUInt32Value(ITEM_FIELD_STACK_COUNT, value);
+    // Detached loading/creation must not resolve owners while the registry
+    // may be locked. Acquisition hooks handle initial storage.
+    if (previous != value && IsInWorld())
+        if (Player* owner = GetOwner())
+            sScriptMgr->OnPlayerItemCountChanged(owner, this, value);
+}
+
 void AddItemsSetItem(Player* player, Item* item)
 {
     ItemTemplate const* proto = item->GetTemplate();
